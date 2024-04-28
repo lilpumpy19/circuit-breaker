@@ -17,4 +17,9 @@ public class ServerController {
     public ResponseEntity<String> error() {
         return ResponseEntity.status(500).body("Status500: ERROR");
     }
+
+    @GetMapping("/400error")
+    public ResponseEntity<String> error400() {
+        return ResponseEntity.status(400).body("Status400: ERROR");
+    }
 }

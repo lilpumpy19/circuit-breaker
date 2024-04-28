@@ -30,6 +30,12 @@ public class CirBreakerController {
         return this.callService(url);
     }
 
+    @GetMapping("/400error")
+    public ResponseEntity<String> callError400() {
+        String url = "http://localhost:8081/api/400error"; // URL первого приложения
+        return this.callService(url);
+    }
+
     private ResponseEntity<String> callService(String url) {
         if (circuitBreaker.checkState()) {
             try {
