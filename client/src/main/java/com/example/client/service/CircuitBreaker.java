@@ -40,28 +40,29 @@ class CircuitBreaker {
         };
     }
 
-    public void checkStatus(ResponseEntity<String> status) {
-        this.printingState();
-        if (status.getStatusCode().is5xxServerError()) {
-            consecutiveErrors++;
-            if (state == State.CLOSED) {
-                this.closedStateEroor();
-            }
-            if (state == State.HALF_OPEN) {
-                this.halfOpenStateError();
-            }
 
-        } else {
-            consecutiveErrors = 0;
-            consecutiveOk++;
-            if (state == State.HALF_OPEN && consecutiveOk >= CONSECUTIVE_OK) {
-                this.state = State.CLOSED;
-            }
+    public void error(){
+        consecutiveErrors++;
+        consecutiveOk = 0;
+        if (state == State.CLOSED) {
+            this.closedStateError();
         }
-
+        if (state == State.HALF_OPEN) {
+            this.halfOpenStateError();
+        }
+        System.out.println(state);
     }
 
-    private void closedStateEroor() {
+    public void ok(){
+        consecutiveErrors = 0;
+        consecutiveOk++;
+        if (state == State.HALF_OPEN && consecutiveOk >= CONSECUTIVE_OK) {
+            this.state = State.CLOSED;
+        }
+        System.out.println(state);
+    }
+
+    private void closedStateError() {
         if (consecutiveErrors >= MAX_CONSECUTIVE_ERRORS_OPEN) {
             this.state = State.OPEN;
             this.timeout();
@@ -86,8 +87,6 @@ class CircuitBreaker {
         state = State.HALF_OPEN;
     }
 
-    public void printingState() {
-        System.out.println("State: " + state);
-    }
+
 }
 

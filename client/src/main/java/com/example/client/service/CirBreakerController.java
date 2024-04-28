@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import static org.springframework.http.ResponseEntity.status;
@@ -31,9 +32,15 @@ public class CirBreakerController {
 
     private ResponseEntity<String> callService(String url) {
         if (circuitBreaker.checkState()) {
-            ResponseEntity<String> status = restTemplate.getForEntity(url, String.class);
-            circuitBreaker.checkStatus(status);
-            return status;
+            try {
+                ResponseEntity<String> status = restTemplate.getForEntity(url, String.class);
+                circuitBreaker.ok();
+                return status;
+            }catch (HttpServerErrorException e){
+                circuitBreaker.error();
+                return ResponseEntity.status(500).body("Service500");
+            }
+
         }else {
             return ResponseEntity.status(503).body("Service is unavailable");
         }
