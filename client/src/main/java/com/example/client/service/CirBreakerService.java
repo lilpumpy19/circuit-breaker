@@ -29,6 +29,7 @@ public class CirBreakerService {
     }
 
     public CircuitBreaker getCircuitBreaker(String methodName) {
+        System.out.println(methodName);
         return cirBreakerConfig.getCircuitBreakerMap().get(methodName);
     }
 }
