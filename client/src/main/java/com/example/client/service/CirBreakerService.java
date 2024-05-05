@@ -12,7 +12,8 @@ public class CirBreakerService {
     private final CirBreakerConfig cirBreakerConfig;
 
     private final RestTemplate restTemplate;
-    public ResponseEntity<String> callService(String url, CircuitBreaker circuitBreaker) {
+    public ResponseEntity<String> callService(String url) {
+        CircuitBreaker circuitBreaker = this.getCircuitBreaker(this.getMethodName());
         if (circuitBreaker.checkState()) {
             try {
                 ResponseEntity<String> status = restTemplate.getForEntity(url, String.class);
@@ -28,12 +29,12 @@ public class CirBreakerService {
         }
     }
 
-    public CircuitBreaker getCircuitBreaker(String methodName) {
+    private CircuitBreaker getCircuitBreaker(String methodName) {
         System.out.println(methodName);
         return cirBreakerConfig.getCircuitBreakerMap().get(methodName);
     }
 
-    public String getMethodName() {
-        return Thread.currentThread().getStackTrace()[2].getMethodName();
+    private String getMethodName() {
+        return Thread.currentThread().getStackTrace()[3].getMethodName();
     }
 }
