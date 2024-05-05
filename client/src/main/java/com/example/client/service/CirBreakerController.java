@@ -15,41 +15,27 @@ import static org.springframework.http.ResponseEntity.status;
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CirBreakerController {
-    private final RestTemplate restTemplate;
-    private final CircuitBreaker circuitBreaker;
+    CirBreakerService cirBreakerService;
+    private final String serviceUrl = "http://localhost:8081/api";
 
     @GetMapping("/ok")
     public ResponseEntity<String> callOk() {
-        String url = "http://localhost:8081/api/ok"; // URL первого приложения
-        return this.callService(url);
+        String url = serviceUrl + "/ok";
+        return cirBreakerService.callService(url);
     }
 
     @GetMapping("/error")
     public ResponseEntity<String> callError() {
-        String url = "http://localhost:8081/api/error"; // URL первого приложения
-        return this.callService(url);
+        String url = serviceUrl + "/error";
+        return cirBreakerService.callService(url);
     }
 
     @GetMapping("/400error")
     public ResponseEntity<String> callError400() {
-        String url = "http://localhost:8081/api/400error"; // URL первого приложения
-        return this.callService(url);
+        String url = serviceUrl + "/400error";
+        return cirBreakerService.callService(url);
     }
 
-    private ResponseEntity<String> callService(String url) {
-        if (circuitBreaker.checkState()) {
-            try {
-                ResponseEntity<String> status = restTemplate.getForEntity(url, String.class);
-                circuitBreaker.ok();
-                return status;
-            }catch (HttpServerErrorException e){
-                circuitBreaker.error();
-                return ResponseEntity.status(500).body("Service500");
-            }
 
-        }else {
-            return ResponseEntity.status(503).body("Service is unavailable");
-        }
-    }
 
 }
