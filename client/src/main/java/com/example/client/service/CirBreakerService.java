@@ -32,4 +32,8 @@ public class CirBreakerService {
         System.out.println(methodName);
         return cirBreakerConfig.getCircuitBreakerMap().get(methodName);
     }
+
+    public String getMethodName() {
+        return Thread.currentThread().getStackTrace()[2].getMethodName();
+    }
 }

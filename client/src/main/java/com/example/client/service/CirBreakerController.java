@@ -23,21 +23,23 @@ public class CirBreakerController {
 
     @GetMapping("/method1")
     public ResponseEntity<String> method1(@RequestParam boolean flag) {
-
         String url = serviceUrl + "/method1?flag=" + flag;
-        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker("method1"));
+        String methodName = cirBreakerService.getMethodName();
+        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker(methodName));
     }
 
     @GetMapping("/method2")
     public ResponseEntity<String> method2(@RequestParam boolean flag) {
         String url = serviceUrl + "/method2?flag=" + flag;
-        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker("method2"));
+        String methodName = cirBreakerService.getMethodName();
+        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker(methodName));
     }
 
     @GetMapping("/400error")
     public ResponseEntity<String> callError400() {
         String url = serviceUrl + "/400error";
-        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker("callError400"));
+        String methodName = cirBreakerService.getMethodName();
+        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker(methodName));
     }
 
 
