@@ -2,6 +2,7 @@ package com.example.client.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -13,12 +14,9 @@ import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
+@Scope(scopeName = "prototype")
+
 class CircuitBreaker {
-
-
-    private enum State {
-        CLOSED, OPEN, HALF_OPEN
-    }
 
     private State state = State.CLOSED;
     private int consecutiveErrors = 0;

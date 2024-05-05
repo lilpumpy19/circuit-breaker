@@ -9,31 +9,34 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
 public class CirBreakerController {
-    CirBreakerService cirBreakerService;
+    private final CirBreakerService cirBreakerService;
     private final String serviceUrl = "http://localhost:8081/api";
 
     @GetMapping("/ok")
     public ResponseEntity<String> callOk() {
+
         String url = serviceUrl + "/ok";
-        return cirBreakerService.callService(url);
+        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker("callOk"));
     }
 
     @GetMapping("/error")
     public ResponseEntity<String> callError() {
         String url = serviceUrl + "/error";
-        return cirBreakerService.callService(url);
+        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker("callError"));
     }
 
     @GetMapping("/400error")
     public ResponseEntity<String> callError400() {
         String url = serviceUrl + "/400error";
-        return cirBreakerService.callService(url);
+        return cirBreakerService.callService(url,cirBreakerService.getCircuitBreaker("callError400"));
     }
 
 

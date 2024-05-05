@@ -9,9 +9,10 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @RequiredArgsConstructor
 public class CirBreakerService {
-    CircuitBreaker circuitBreaker;
-    RestTemplate restTemplate;
-    public ResponseEntity<String> callService(String url) {
+    private final CirBreakerConfig cirBreakerConfig;
+
+    private final RestTemplate restTemplate;
+    public ResponseEntity<String> callService(String url, CircuitBreaker circuitBreaker) {
         if (circuitBreaker.checkState()) {
             try {
                 ResponseEntity<String> status = restTemplate.getForEntity(url, String.class);
@@ -25,5 +26,9 @@ public class CirBreakerService {
         }else {
             return ResponseEntity.status(503).body("Service is unavailable");
         }
+    }
+
+    public CircuitBreaker getCircuitBreaker(String methodName) {
+        return cirBreakerConfig.getCircuitBreakerMap().get(methodName);
     }
 }
